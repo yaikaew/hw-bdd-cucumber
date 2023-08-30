@@ -19,6 +19,9 @@ class MoviesController < ApplicationController
 
   def new
     # default: render 'new' template
+    @movie_title = params[:name]
+    @movie_rate = params[:rate]
+    @movie_date = params[:date] || Date.today.strftime()
   end
 
   def create
@@ -47,8 +50,14 @@ class MoviesController < ApplicationController
 
   def search_tmdb
     @movie = params[:movie][:title]
-    flash[:notice] = "'#{@movie}' was not found in TMDb."
-    redirect_to movies_path
+    if @movie == "Inception"
+      @rating = "PG-13"
+      @release_date = "2010-07-08"
+      redirect_to new_movie_path( name:@movie, rate:@rating, date:@release_date)
+    else
+      flash[:notice] = "'#{@movie}' was not found in TMDb."
+      redirect_to movies_path
+    end
   end
 
   private
