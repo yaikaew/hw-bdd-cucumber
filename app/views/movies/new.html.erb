@@ -6,7 +6,7 @@
   <%= label :movie, :rating, 'Rating', class: 'col-form-label' %>
   <%= select :movie, :rating, ['G','PG','PG-13','R'], {selected:@movie_rate}, {class: 'form-control col-1'} %>
   <%= label :movie, :release_date, 'Released On', class: 'col-form-label' %>
-  <%= date_select :movie, :release_date, {selected:Date.parse(@movie_rate)}, class: 'form-control col-2 d-inline' %>
+  <%= date_select :movie, :release_date, {selected:Date.parse(@movie_date)}, class: 'form-control col-2 d-inline' %>
   <br/>
   <%= submit_tag 'Save Changes', class: 'btn btn-primary' %>
   <%= link_to 'Cancel', movies_path, class: 'btn btn-secondary' %>

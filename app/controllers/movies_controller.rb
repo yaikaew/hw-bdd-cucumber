@@ -1,3 +1,5 @@
+Tmdb::Api.key(ENV["API_TMDB"])
+
 class MoviesController < ApplicationController
   before_action :force_index_redirect, only: [:index]
 
@@ -50,10 +52,13 @@ class MoviesController < ApplicationController
 
   def search_tmdb
     @movie = params[:movie][:title]
-    if @movie == "Inception"
-      @rating = "PG-13"
-      @release_date = "2010-07-08"
-      redirect_to new_movie_path( name:@movie, rate:@rating, date:@release_date)
+    find_movie = Tmdb::Movie.find(@movie)
+    if !find_movie.empty?  #เช็คว่าไม่ใช่ลิสว่าง
+      mov1 = find_movie[0] #หนังเรื่องแรกที่ค้นหาเจอ
+      #@rating = "PG-13" เอาออก ลบการส่งด้วย
+      @release_date = mov1.release_date
+      @title_name = mov1.title
+      redirect_to new_movie_path( name:@title_name, date:@release_date)
     else
       flash[:notice] = "'#{@movie}' was not found in TMDb."
       redirect_to movies_path
