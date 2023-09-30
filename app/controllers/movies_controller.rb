@@ -20,10 +20,13 @@ class MoviesController < ApplicationController
   end
 
   def new
+    if params[:movie]
+      @movie = Movie.new(movie_params)
+    end 
     # default: render 'new' template
-    @movie_title = params[:name]
-    @movie_rate = params[:rate]
-    @movie_date = params[:date] || Date.today.strftime()
+    # @movie_title = params[:name]
+    # @movie_rate = params[:rate]
+    # @movie_date = params[:date] || Date.today.strftime()
   end
 
   def create
@@ -58,7 +61,7 @@ class MoviesController < ApplicationController
       #@rating = "PG-13" เอาออก ลบการส่งด้วย
       @release_date = mov1.release_date
       @title_name = mov1.title
-      redirect_to new_movie_path( name:@title_name, date:@release_date)
+      redirect_to new_movie_path(movie:{title:@title_name, release_date:@release_date})
     else
       flash[:notice] = "'#{@movie}' was not found in TMDb."
       redirect_to movies_path
