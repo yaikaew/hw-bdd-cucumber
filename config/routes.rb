@@ -3,10 +3,6 @@ Rottenpotatoes::Application.routes.draw do
     resources :reviews
   end
   
-  resources :moviegoers do
-    resources :reviews
-  end
-  
   devise_for :moviegoers, controllers: {
     omniauth_callbacks: 'moviegoers/omniauth_callbacks',
     sessions: 'moviegoers/sessions',
