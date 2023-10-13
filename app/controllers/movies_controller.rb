@@ -14,9 +14,7 @@ class MoviesController < ApplicationController
     @movies = Movie.with_ratings(ratings_list, sort_by)
     @ratings_to_show_hash = ratings_hash
     @sort_by = sort_by
-    # remember the correct settings for next time
-    session['ratings'] = ratings_list
-    session['sort_by'] = @sort_by
+    store_settings_in_session
   end
 
   def new
@@ -54,17 +52,14 @@ class MoviesController < ApplicationController
   end
 
   def search_tmdb
-    @movie = params[:movie][:title]
-    find_movie = Tmdb::Movie.find(@movie)
-    if !find_movie.empty?  #เช็คว่าไม่ใช่ลิสว่าง
-      mov1 = find_movie[0] #หนังเรื่องแรกที่ค้นหาเจอ
-      #@rating = "PG-13" เอาออก ลบการส่งด้วย
-      @release_date = mov1.release_date
-      @title_name = mov1.title
-      redirect_to new_movie_path(movie:{title:@title_name, release_date:@release_date})
+    @movie_name = params.dig(:movie, :title)
+    find_movie = Tmdb::Movie.find(@movie_name)
+
+    if find_movie.present?
+      handle_found_movie(find_movie.first)
     else
-      flash[:notice] = "'#{@movie}' was not found in TMDb."
-      redirect_to movies_path
+      redirect_to_movies_path
+      flash[:notice] = " '#{@movie_name}' was not found in TMDb."
     end
   end
 
@@ -92,5 +87,16 @@ class MoviesController < ApplicationController
 
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
+  end
+
+  def store_settings_in_session
+    session['ratings'] = ratings_list
+    session['sort_by'] = @sort_by
+  end
+
+  def handle_found_movie(first_movie)
+    @release_date = first_movie.release_date
+    @name = first_movie.title
+    redirect_to new_movie_path(movie: { title: @name, release_date: @release_date })
   end
 end
